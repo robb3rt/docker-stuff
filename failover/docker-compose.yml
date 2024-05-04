@@ -1,0 +1,47 @@
+version: "3.7"
+services:
+  lb:
+    image: haproxy:latest
+    volumes:
+      # haproxy config is compatible with docker-compose v2 (i.e. it uses "-" instead of v1 "_" for container names)
+      # if you're using docker desktop, you should be good (or upgrade to recent version)
+      # if you're using docker engine, install docker-compose-plugin
+      # if neither works for you, do s/-/_/g in host names in haproxy.cfg
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - leaders
+    ports:
+      - "4200:4200"
+      - "9000:9000"
+
+  leaders:
+    image: cribl/cribl:4.5.1
+    environment:
+      CRIBL_DIST_MODE: leader
+      CRIBL_DIST_MASTER_URL: tcp://criblmaster@0.0.0.0:4200
+      CRIBL_DIST_MASTER_RESILIENCY: failover
+      CRIBL_DIST_MASTER_FAILOVER_VOLUME: /failover
+      CRIBL_BEFORE_START_CMD_1: >
+        echo 'licenses:' > /opt/cribl/local/cribl/licenses.yml;
+        echo -n '  - ' >> /opt/cribl/local/cribl/licenses.yml;
+        cat /tmp/lic.txt >> /opt/cribl/local/cribl/licenses.yml;
+        cat /tmp/instance.yml >> /opt/cribl/local/_system/instance.yml;
+    ports:
+      - "9001-9010:9000"
+      - "4201-4210:4200"
+    volumes:
+      - nfs:/failover
+      - /Users/rhink/cribl/docker/certs/license-cribl-dev-nfr.txt:/tmp/lic.txt
+      - /Users/rhink/cribl/docker/failover/instance.yml:/tmp/instance.yml
+  workers:
+    image: cribl/cribl:4.5.1
+    depends_on:
+      - leaders
+      - lb
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@lb:4200
+    ports:
+      - "9000"
+volumes:
+    nfs:

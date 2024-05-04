@@ -1,0 +1,18 @@
+inputs:
+  in_splunk_tcp:
+    disabled: false
+    sendToRoutes: true
+    pqEnabled: false
+    streamtags: []
+    host: 0.0.0.0
+    tls:
+      disabled: true
+    ipWhitelistRegex: /.*/
+    maxActiveCxn: 1000
+    enableProxyHeader: false
+    staleChannelFlushMs: 10000
+    maxS2Sversion: v3
+    type: splunk
+    port: 9997
+    breakerRulesets:
+      - custom-gksm-cardterminal-timestamp

@@ -1,0 +1,20 @@
+custom-gksm-cardterminal-timestamp:
+  lib: custom
+  minRawLength: 256
+  rules:
+    - condition: sourcetype=='gksm-cardterminal' || sourcetype === 'gksm_eft'
+      type: regex
+      timestampAnchorRegex: /^\s/
+      timestamp:
+        type: format
+        length: 150
+        format: "%Y-%m-%d %H:%M:%S:%L"
+      timestampTimezone: Europe/Berlin
+      timestampEarliest: -420weeks
+      timestampLatest: +1week
+      maxEventBytes: 51200
+      disabled: false
+      parserEnabled: false
+      shouldUseDataRaw: false
+      eventBreakerRegex: /[\n\r]+(?=\d{4}-\d{2}-\d{2})/
+      name: custom-gksm-cardterminal

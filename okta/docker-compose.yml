@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  master:
+    image: cribl/cribl:4.4.3
+    environment:
+      - CRIBL_DIST_MODE=master
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@0.0.0.0:4200
+      - CRIBL_VOLUME_DIR=/opt/cribl/config-volume
+    ports:
+      - "9000:9000"
+    volumes:
+      - "~/cribl-okta-config:/opt/cribl/config-volume"
+  workers:
+    image: cribl/cribl:4.4.3
+    depends_on: 
+      - master
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@master:4200
+    ports:
+      - 9000

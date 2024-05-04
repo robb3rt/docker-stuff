@@ -1,0 +1,27 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle --web.enable-remote-write-receiver --config.file=/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  cribl:
+    image: cribl/cribl:4.5.1
+    environment:
+      CRIBL_DIST_MODE: master
+      CRIBL_DIST_MASTER_URL: tcp://criblmaster@0.0.0.0:4200
+    ports:
+      - 19000:9000
+  edge:
+    privileged: true
+    image: cribl/cribl:4.5.1
+    environment:
+      CRIBL_DIST_MODE: managed-edge
+      CRIBL_DIST_MASTER_URL: tcp://criblmaster@cribl:4200?group=default_fleet
+      CRIBL_EDGE: 1
+volumes:
+  prometheus-data:

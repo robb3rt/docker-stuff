@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  leader-dev:
+    image: cribl/cribl:4.6.0
+    environment:
+      - CRIBL_DIST_MODE=master
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@0.0.0.0:4200
+    ports:
+      - "19001:9000"
+  workers-dev:
+    image: cribl/cribl:4.6.0
+    depends_on: 
+      - leader-dev
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@leader-dev:4200
+    ports:
+      - 9000
+  leader-prod:
+    image: cribl/cribl:4.6.0
+    environment:
+      - CRIBL_DIST_MODE=master
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@0.0.0.0:4200
+      - CRIBL_VOLUME_DIR=/opt/cribl/config-volume
+    ports:
+      - "19002:9000"
+  workers-prod:
+    image: cribl/cribl:4.6.0
+    depends_on: 
+      - leader-prod
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@leader-prod:4200
+    ports:
+      - 9000
+  gitea:
+    image: gitea/gitea:latest
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - SSH_PORT=8022
+    restart: always
+    volumes:
+      - ~/git/.ssh/:/data/git/.ssh
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "3000:3000"
+      - "8022:8022"

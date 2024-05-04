@@ -1,0 +1,27 @@
+id: default
+groups: {}
+comments: []
+routes:
+  - id: tkH0Xs
+    name: minio_json
+    final: true
+    disabled: false
+    pipeline: passthru
+    description: ""
+    clones:
+      - {}
+    enableOutputExpression: false
+    outputExpression: null
+    filter: __inputId=='http_raw:sqs_json'
+    output: testing_elasticmq
+  - id: default
+    name: default
+    final: true
+    disabled: true
+    pipeline: main
+    description: ""
+    clones: []
+    enableOutputExpression: false
+    outputExpression: null
+    filter: "true"
+    output: default

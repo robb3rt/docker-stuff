@@ -1,0 +1,25 @@
+outputs:
+  testing_elasticmq:
+    systemFields:
+      - cribl_pipe
+    streamtags: []
+    queueType: standard
+    messageGroupId: cribl
+    createQueue: false
+    awsAuthenticationMethod: manual
+    signatureVersion: v4
+    reuseConnections: false
+    rejectUnauthorized: false
+    enableAssumeRole: false
+    durationSeconds: 3600
+    maxQueueSize: 100
+    maxRecordSizeKB: 256
+    flushPeriodSec: 1
+    maxInProgress: 10
+    onBackpressure: block
+    type: sqs
+    queueName: "`foo`"
+    region: us-east-1
+    awsApiKey: na
+    awsSecretKey: "na"
+    endpoint: http://elasticmq:9324

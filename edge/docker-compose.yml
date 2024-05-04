@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  master:
+    image: cribl/cribl:4.3.1
+    environment:
+      - CRIBL_DIST_MODE=master
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@0.0.0.0:4200
+      - CRIBL_VOLUME_DIR=/opt/cribl/config-volume
+    ports:
+      - "19000:9000"
+    volumes:
+      - "~/cribl-config:/opt/cribl/config-volume"
+  edge-worker:
+    privileged: true
+    environment:
+      - CRIBL_DIST_MODE=managed-edge
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@master:4200?group=default_fleet
+      - CRIBL_EDGE=1
+    volumes:
+       - /var/run/appscope:/var/run/appscope
+       - /var/run/docker.sock:/var/run/docker.sock
+       - /:/hostfs:ro
+    ports:
+      - 9420:9420
+    restart: unless-stopped
+    container_name: edge-worker
+    image: cribl/cribl:4.3.1

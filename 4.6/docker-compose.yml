@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  master:
+    image: cribl/cribl:4.6.0
+    environment:
+      - CRIBL_DIST_MODE=master
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@0.0.0.0:4200
+    ports:
+      - 19000:9000
+  worker1:
+    image: cribl/cribl:4.6.0
+    depends_on: 
+      - master
+    environment:
+      - CRIBL_DIST_MODE=worker
+      - CRIBL_DIST_MASTER_URL=tcp://criblmaster@master:4200?group=default
+    ports:
+      - 9000

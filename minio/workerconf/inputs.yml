@@ -1,0 +1,80 @@
+inputs:
+  elasticmq_source:
+    disabled: true
+    sendToRoutes: true
+    pqEnabled: false
+    streamtags: []
+    queueType: standard
+    createQueue: false
+    awsAuthenticationMethod: manual
+    signatureVersion: v4
+    reuseConnections: false
+    rejectUnauthorized: false
+    enableAssumeRole: false
+    durationSeconds: 3600
+    maxMessages: 10
+    visibilityTimeout: 600
+    pollTimeout: 10
+    numReceivers: 3
+    type: sqs
+    queueName: "foo"
+    region: us-east-1
+    awsApiKey: na
+    awsSecretKey: "na"
+    endpoint: http://nginx:10080
+  sqs_json:
+    disabled: false
+    sendToRoutes: true
+    pqEnabled: false
+    streamtags: []
+    host: 0.0.0.0
+    tls:
+      disabled: true
+    maxActiveReq: 256
+    maxRequestsPerSocket: 0
+    enableProxyHeader: false
+    captureHeaders: false
+    activityLogSampleRate: 100
+    requestTimeout: 0
+    socketTimeout: 0
+    keepAliveTimeout: 5
+    staleChannelFlushMs: 10000
+    allowedPaths:
+      - "*"
+    allowedMethods:
+      - "*"
+    type: http_raw
+    port: 9324
+    pipeline: minio_to_sqs
+  testing_minio_pull:
+    disabled: false
+    sendToRoutes: true
+    pqEnabled: false
+    streamtags: []
+    fileFilter: /.*/
+    awsAuthenticationMethod: manual
+    signatureVersion: v4
+    reuseConnections: false
+    rejectUnauthorized: false
+    staleChannelFlushMs: 10000
+    maxMessages: 1
+    visibilityTimeout: 600
+    numReceivers: 1
+    socketTimeout: 300
+    skipOnError: false
+    enableAssumeRole: false
+    durationSeconds: 3600
+    enableSQSAssumeRole: false
+    preprocess:
+      disabled: true
+    parquetChunkSizeMB: 5
+    parquetChunkDownloadTimeout: 600
+    checkpointing:
+      enabled: false
+    pollTimeout: 10
+    type: s3
+    queueName: "`http://elasticmq:9324/000000000000/foo`"
+    region: us-east-1
+    awsApiKey: minioadmin
+    awsSecretKey: "minioadmin"
+    endpoint: http://minio:9000

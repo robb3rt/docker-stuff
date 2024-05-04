@@ -1,0 +1,24 @@
+version: '3.3'
+services:
+  splunk_uf:
+    platform: linux/amd64
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_PASSWORD=splunkdev
+    ports:
+      - '9997:9997'
+    image: splunk/universalforwarder:9.2.1
+    volumes:
+      - ./inputs.conf:/tmp/inputs.conf
+      - ./outputs.conf:/tmp/outputs.conf
+      - ./terminal.log:/tmp/test.log
+  cribl:
+    image: cribl/cribl:4.5.1
+    environment:
+      CRIBL_DIST_MODE: single
+      CRIBL_BEFORE_START_CMD_1: >
+        cp -r /tmp/workerconf/* /opt/cribl/local/cribl;
+    ports:
+      - 9000:9000
+    volumes:
+      - ./workerconf/:/tmp/workerconf
